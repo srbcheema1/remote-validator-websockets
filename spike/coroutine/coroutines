@@ -1,0 +1,7 @@
+import asyncio
+
+async def my_coro():
+    await func()
+
+When you define a coroutine in this manner, you cannot use yield inside the coroutine function. Instead it must include a return or await statement that are used for returning values to the caller. Note that the await keyword can only be used inside an async def function.
+
