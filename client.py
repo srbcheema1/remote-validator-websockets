@@ -23,20 +23,15 @@ async def receive_output(conn):
 
 async def start_client(uri):
     async with websockets.connect(uri) as conn:
-        await asyncio.wait([
-            send_input(conn),
-            receive_output(conn)
-            ])
+        await asyncio.wait([ send_input(conn), receive_output(conn) ])
 
 if (__name__ == "__main__"):
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--port",default=default_port, help="PORT number eg:- 12321")
-    parser.add_argument("-i", "--ip",default=default_ip, help="IP adress eg:- 127.0.0.1")
+    parser.add_argument("-a", "--address",default=default_ip, help="IP adress eg:- 127.0.0.1")
     args = parser.parse_args()
 
-    ip = args.ip
+    ip = args.address
     port = int(args.port)
 
-    asyncio.get_event_loop().run_until_complete(
-            start_client('ws://'+ip+':'+str(port))
-        )
+    asyncio.get_event_loop().run_until_complete(start_client('ws://'+ip+':'+str(port)))

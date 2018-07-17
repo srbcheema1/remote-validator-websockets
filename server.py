@@ -1,16 +1,16 @@
 #!/usr/bin/env python3.6
-
 import argparse
 import asyncio
 import queue
+import subprocess as sp
 import sys
 import threading
 import time
 import websockets
-from asyncio import subprocess as sp, create_subprocess_exec as create_sp
-import subprocess as sp
+
 
 from aioconsole import ainput
+from asyncio import subprocess as sp, create_subprocess_exec as create_sp
 from concurrent import futures
 from select import select
 from random import randint
@@ -30,9 +30,11 @@ class Remote_Validator:
         self.output_dir = "./bin/out/"
         self.validator = None
 
+
     def start(self):
         self.event_loop.run_until_complete(websockets.serve(self.echo, self.ip, self.port))
         self.event_loop.run_forever()
+
 
     def endl(self,data):
         if (type(data) is str):
@@ -45,6 +47,7 @@ class Remote_Validator:
             return data
         else:
             return data + enc('\n')
+
 
     def make_reply(self, reply):
         if (type(reply) is not str):
@@ -83,10 +86,12 @@ class Remote_Validator:
         reply = "bye"
         await conn.send(reply)
 
+
     def enqueue_output(self, out, queue):
         for line in iter(out.readline, b''):
             queue.put(line)
         out.close()
+
 
     async def receive_input(self, conn):
         clean_folder(self.output_dir)
@@ -108,6 +113,7 @@ class Remote_Validator:
             ])
 
 
+
 if (__name__ == "__main__"):
     if(check_version() != "3.6"):
         print("use python3.6")
@@ -115,10 +121,10 @@ if (__name__ == "__main__"):
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-p", "--port",default=default_port, help="PORT number eg:- 12321")
-    parser.add_argument("-i", "--ip",default=default_ip, help="IP adress eg:- 127.0.0.1")
+    parser.add_argument("-a", "--address",default=default_ip, help="IP adress eg:- 127.0.0.1")
     args = parser.parse_args()
 
-    ip = args.ip
+    ip = args.address
     port = int(args.port)
 
     validator = Remote_Validator(ip, port)
