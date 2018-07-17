@@ -1,32 +1,19 @@
 #!/usr/bin/env python3.6
-
+import aioconsole
 import argparse
 import asyncio
 import websockets
-import aiofiles
-
-from aioconsole import ainput
 
 from util.defaults import default_ip, default_port, connection_timeout
 
 async def send_input(conn):
+    stdin, _ = await aioconsole.get_standard_streams()
     while True:
-        try:
-            inp = await ainput()
-        except:
-            await conn.send("bye")
+        inp = await stdin.read(4)
+        if not inp:
+            await conn.send(b'bye')
             break
         await conn.send(inp)
-
-async def read_stdin(conn):
-    async with aiofiles.open('/dev/stdin', mode='rb') as f:
-        while True:
-            inp = await f.read(4)
-            if not inp:
-                await conn.send(b'bye')
-                break
-            await conn.send(inp)
-
 
 async def receive_output(conn):
     async for message in conn:
@@ -37,8 +24,7 @@ async def receive_output(conn):
 async def start_client(uri):
     async with websockets.connect(uri) as conn:
         await asyncio.wait([
-            # send_input(conn),
-            read_stdin(conn),
+            send_input(conn),
             receive_output(conn)
             ])
 
