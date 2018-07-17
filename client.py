@@ -3,6 +3,7 @@
 import argparse
 import asyncio
 import websockets
+import aiofiles
 
 from aioconsole import ainput
 
@@ -17,6 +18,15 @@ async def send_input(conn):
             break
         await conn.send(inp)
 
+async def read_stdin(conn):
+    async with aiofiles.open('/dev/stdin', mode='rb') as f:
+        while True:
+            inp = await f.read(4)
+            if not inp:
+                await conn.send(b'bye')
+                break
+            await conn.send(inp)
+
 
 async def receive_output(conn):
     async for message in conn:
@@ -27,7 +37,8 @@ async def receive_output(conn):
 async def start_client(uri):
     async with websockets.connect(uri) as conn:
         await asyncio.wait([
-            send_input(conn),
+            # send_input(conn),
+            read_stdin(conn),
             receive_output(conn)
             ])
 

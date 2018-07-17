@@ -93,12 +93,12 @@ class Remote_Validator:
         self.validator = await create_sp(vcf_path,"-r","text","-o",self.output_dir, stdin=sp.PIPE)
 
         async for message in conn:
-            if(message == "bye"):
+            print(':>> ' , message)
+            if(message == b'bye'):
                 print('EOF to validator')
                 self.validator.stdin.close()
                 break
-            print(':>> ' + message)
-            self.validator.stdin.write(self.endl(message))
+            self.validator.stdin.write(message)
 
 
     async def echo(self, conn, path):
