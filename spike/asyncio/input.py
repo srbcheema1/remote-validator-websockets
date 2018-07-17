@@ -4,6 +4,7 @@ import aiofiles
 import aioconsole
 
 # works fine on compressed files but platform dependent
+# we can use sys.stdin.fileno() in place of /dev/stdin
 async def read_using_aiofile():
     async with aiofiles.open('/dev/stdin', mode='rb') as f:
         while True:
